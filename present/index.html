@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Bayesian inference for additive mixed quantile regression models</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Bayesian inference for additive mixed quantile regression models">
+  <meta name="author" content="李鹏翔">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="libraries/widgets/bootstrap/css/bootstrap.css"></link>
+<link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+      <slide class="nobackground">
+    <article class="flexbox vcenter">
+      <span>
+        <img width='300px' src="assets/img/slidify_logo.png">
+      </span>
+    </article>
+  </slide>
+    <slide class="title-slide segue nobackground">
+  <aside class="gdbar">
+    <img src="assets/img/slidify_logo.png">
+  </aside>
+  <hgroup class="auto-fadein">
+    <h1>Bayesian inference for additive mixed quantile regression models</h1>
+    <h2>Example</h2>
+    <p>李鹏翔<br/>14720065</p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>5.1. Simulation studies</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul class = "build incremental">
+<li>1. <strong>三个目的</strong>
+
+<ul>
+<li>验证ALD分布的adequacy</li>
+<li>比较俩种不同的STAQ模型推断方法：MCMC和INLA</li>
+<li>与Boost方法作比较</li>
+</ul></li>
+<li>2. <strong>二个模型</strong>
+\[ y_{i}=0.4u_{i}+0.5\sin(2.7u_{i})+1.1/(1+u_{i}^{2})+\varepsilon_{i},u_{i}\in [-3,3] \]
+\[ y_{i}=2+sin(2u_{i}/3)+0.5(1+(u_{i}-3)^{2})\varepsilon_{i},u_{i}\in [0,6] \]
+固定观测数n=400,通过假设误差项服从不同的分布，我们来观察不同分布下对应的不同的分位数函数的图像。</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-2" style="background:light;">
+  <article data-timings="">
+    <pre><code>par(mfrow=c(1,2))     
+t &lt;- c(0.1,0.25,0.5,0.75,0.9)
+color &lt;- c(&quot;red&quot;,&quot;blue&quot;,&quot;yellow&quot;,&quot;pink&quot;,&quot;green&quot;)
+</code></pre>
+
+<pre><code>x &lt;- seq(-3,3,length.out=400)
+y &lt;- 0.4*x + 0.5*sin(2.7*x) + 1.1/(1+x^2) + rnorm(400)  
+plot(x, y)
+for(i in 1:5){
+    z &lt;- c()  
+    z &lt;- 0.4*x + 0.5*sin(2.7*x) + 1.1/(1+x^2) + qnorm(t[i])
+    lines(x, z, type=&quot;l&quot;, col=color[i])  }
+</code></pre>
+
+<pre><code>u &lt;- seq(0,6,length.out=400)
+q &lt;- 2 + sin(2*u/3) + 0.5*(1+(u-3)^2)*rnorm(400)   plot(u,q)
+for(i in 1:5){
+    m &lt;- c()  
+    m &lt;- 2 + sin(2*u/3) + 0.5*(1+(u-3)^2)*qnorm(t[i])
+    lines(u,m,type=&quot;l&quot;,col=color[i])  } 
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-3" style="background:#EEE;">
+  <article data-timings="">
+    <p><img src="assets/fig/unnamed-chunk-1-1.png" title="plot of chunk unnamed-chunk-1" alt="plot of chunk unnamed-chunk-1" style="display: block; margin: auto;" /></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-4" style="background:;">
+  <hgroup>
+    <h2>Fig 1</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/img/a.png" alt="a"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-5" style="background:#EEE;">
+  <hgroup>
+    <h3>performance</h3>
+  </hgroup>
+  <article data-timings="">
+    <ul class = "build incremental">
+<li><p>1.对于每一次模拟的数据集，我们分别用<strong>MCMC</strong>方法和<strong>INLA</strong>方法对不同分位数下的STAQ模型进行估计，并与自助模型进行比较。选择CRW2模型作为两种方法的函数先验，选择离散的gamma分布(a=1,c=0.001)作为精度参数的先验。
+\[ MADE=\frac{1}{n}|Q_{k}(\tau|u)-\widehat{Q_{k}}(\tau|u)|,k=1,2, \]</p></li>
+<li><p>2.计算绝对值偏差的均值(MADEs),并重复试验200次，根据所得结果来评价估计的效果。
+Fig2展示了误差项分别服从正态和t分布时，估计的分位数曲线。Fig3展示了俩种估计方法得到的后验样本的直方图。</p></li>
+<li><p>3.Table3 比较了俩种方法在不同的样本大小下计算的时间。</p></li>
+<li><p>4.当估计比较极端的分位数时，<strong>MCMC</strong>方法表现要逊于<strong>INLA</strong>。当模拟的样本大小少于400时，例如，我们计算了当n=100和250，MADE的结果和n=400时表现结果相似，尽管值比较大。</p></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-6" style="background:;">
+  <hgroup>
+    <h2>Table 1</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/img/b.png" alt="b"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-7" style="background:;">
+  <hgroup>
+    <h3>Table2 and Table 3</h3>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/img/c.png" alt="c"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-8" style="background:;">
+  <hgroup>
+    <h3>Fig2</h3>
+  </hgroup>
+  <article data-timings="">
+    <p><img src = "assets/img/d.png" class="center" ></img></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-9" style="background:;">
+  <hgroup>
+    <h3>Fig3</h3>
+  </hgroup>
+  <article data-timings="">
+    <p><img src = "assets/img/e.png" class="center" ></img></p>
+
+<ul class = "build incremental">
+<li>Conclusion
+
+<ul>
+<li>(i)对于贝叶斯非参数回归推断来说，假设似然函数是ALD是合适的。</li>
+<li>(ii) STAQ模型的performance是具有竞争性的。</li>
+<li>(iii) INLA提供了一种相当好的近似方法。</li>
+</ul></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-10" style="background:#EEE;">
+  <article data-timings="">
+    <p><img src="assets/img/o.png" alt="o"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-11" style="background:;">
+  <hgroup>
+    <h2>5.2. Munich rental guide</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>我们来分析2003年Munich租金的数据集，响应变量 \(y_{i}\) 是公寓租金，协变量有空间
+位置(\(u_{i}\)),地板空间大小(\(size_{i}\)),建造日期(\(year_{i}\))以及不同的指示变量。数据集由2035个观测组成。响应变量是偏斜异质性分布的事实表明，用分位数回归拟合是合适的。
+<img src="assets/img/f.png" alt="f"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-12" style="background:#EEE;">
+  <hgroup>
+    <h3>geoadditive model</h3>
+  </hgroup>
+  <article data-timings="">
+    <ul class = "build incremental">
+<li><p>对于第$\tau$个分位数回归，我们建立一个空间可加模型：
+\[ \eta_{\tau i}=x_{i}^{T}\beta_{\tau}+f_{\tau1}(size_{i})+f_{\tau2}(year_{i})+f_{\tau3}(u_{i}) \]</p></li>
+<li><p>其中 \(x_{i}\) 代表13个维度的类别型协变量，函数 \(f_{\tau 1}\) 和 \(f_{\tau 2}\) 是关于地板大小和建造时间的非线性函数，函数 \(f_{\tau 3}\) 代表着空间效应模型(基于Munich地区离散的空间信息)</p></li>
+<li><p>用<strong>INLA</strong>方法估计三个分位数模型(\(\tau=0.25,0.5,0.75\)),其中的调节参数\(\gamma=2\),超参数\(a=1,b=0.001\).我们将看到，分位数推断可以观察到一些均值回归看不到的有用信息。</p></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-13" style="background:;">
+  <hgroup>
+    <h2>Fig.4</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/img/g.png" alt="g"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-14" style="background:;">
+  <hgroup>
+    <h2>information</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul class = "build incremental">
+<li><p>仔细观察fig.4.,对比 \(\tau=0.75\) 和 \(\tau=0.25\) 时的租金关于year和floor size的分位数图像，你发现了什么？你可以解释其中的原因吗?</p></li>
+<li><p>可以用你的话描述空间位置影响租金的图像吗？</p></li>
+<li><p>Table5 是用INLA估计得到的参数值，解释一下随着$\tau$的增大，变量Keine.Zh和Kein.Badkach为什么有显著的增长以及变量Keine.Www却下降了。</p></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-15" style="background:#EEE;">
+  <hgroup>
+    <h2>Final remarks</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>1.对于可加混合模型，我们提供了两种推断方法，并通过模拟研究考虑了两种方法的精确性和计算效率</p>
+
+<p>2.Munich rental 的例子显示了我们STAQ模型的有效性。</p>
+
+<p>3.需要指出的是，用此模型去估计极端的分位数是困难的。</p>
+
+<p>4.未来我们可以研究用STAQ模型来对计数和两变量的数据进行分位数推断。</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-16" style="background:yellow;">
+  <hgroup>
+    <h1>Appendix</h1>
+  </hgroup>
+  <article data-timings="">
+    <pre><code>library(INLA)
+data(Munich)
+</code></pre>
+
+<pre><code>g &lt;- system.file(&quot;demodata/munich.graph&quot;, package=&quot;INLA&quot;)
+
+formula &lt;- rent ~ f(location, model = &quot;besag&quot;, graph.file = g,
+                   param = c(1,0.001)) +
+                  f(year, model=&quot;crw2&quot;, values = seq(1918,2001), param = c(1,0.001)) +
+                  f(floor.size, model = &quot;crw2&quot;, param = c(1,0.001)) +
+                  Gute.Wohnlage + Beste.Wohnlage + Keine.Wwv + Keine.Zh +
+                  Kein.Badkach + Besond.Bad + Gehobene.Kueche +
+                  zim1 + zim2 + zim3 + zim4 + zim5 + zim6 -1
+mod &lt;- inla(formula, data = Munich, verbose = T, family = &quot;laplace&quot;,
+             control.family =list(alpha = 0.5, gamma = 2, epsilon = 0.01),
+             control.predictor = list(initial = 12), 
+             control.inla = list(h = 1e-3))
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-17" style="background:;">
+  <article data-timings="">
+    <p><img src="assets/img/h.png" alt="h"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-18" style="background:;">
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='5.1. Simulation studies'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title=''>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title=''>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='Fig 1'>
+         4
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=5 title='performance'>
+         5
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=6 title='Table 1'>
+         6
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=7 title='Table2 and Table 3'>
+         7
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=8 title='Fig2'>
+         8
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=9 title='Fig3'>
+         9
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=10 title=''>
+         10
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=11 title='5.2. Munich rental guide'>
+         11
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=12 title='geoadditive model'>
+         12
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=13 title='Fig.4'>
+         13
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=14 title='information'>
+         14
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=15 title='Final remarks'>
+         15
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=16 title='Appendix'>
+         16
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=17 title=''>
+         17
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=18 title=''>
+         18
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  <script src="libraries/widgets/bootstrap/js/bootstrap.min.js"></script>
+<script src="libraries/widgets/bootstrap/js/bootbox.min.js"></script>
+
+  <!-- MathJax: Fall back to local if CDN offline but local image fonts are not supported (saves >100MB) -->
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        processEscapes: true
+      }
+    });
+  </script>
+  <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <!-- <script src="https://c328740.ssl.cf1.rackcdn.com/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script> -->
+  <script>window.MathJax || document.write('<script type="text/x-mathjax-config">MathJax.Hub.Config({"HTML-CSS":{imageFont:null}});<\/script><script src="libraries/widgets/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"><\/script>')
+</script>
+<script>  
+  $(function (){ 
+    $("#example").popover(); 
+    $("[rel='tooltip']").tooltip(); 
+  });  
+  </script>  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>
