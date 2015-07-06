@@ -1,268 +1,63 @@
-<!DOCTYPE html>
-<html lang="en-us">
+<!doctype html>
+<html>
   <head>
-    <meta charset="UTF-8">
-    <title>Slidify by louis1991</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>slidify by louis1991</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-dark.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
   </head>
   <body>
-    <section class="page-header">
-      <h1 class="project-name">Slidify</h1>
-      <h2 class="project-tagline">This is the first time I&#39;m try the slidity to present  my report!</h2>
-      <a href="https://github.com/louis1991/slidify" class="btn">View on GitHub</a>
-      <a href="https://github.com/louis1991/slidify/zipball/master" class="btn">Download .zip</a>
-      <a href="https://github.com/louis1991/slidify/tarball/master" class="btn">Download .tar.gz</a>
-    </section>
+    <div class="wrapper">
+      <header>
+        <h1>slidify</h1>
+        <p>This is the first time I&#39;m try the slidity to present  my report!</p>
+        <p class="view"><a href="https://github.com/louis1991/slidify">View the Project on GitHub <small>louis1991/slidify</small></a></p>
+        <ul>
+          <li><a href="https://github.com/louis1991/slidify/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/louis1991/slidify/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/louis1991/slidify">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h3>
+<a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
 
-    <section class="main-content">
-      <hr>
-
-<p>title       : Bayesian inference for additive mixed quantile regression models
-subtitle    : Example
-author      : 李鹏翔
-job         : 14720065
-logo: slidify_logo.png
-biglogo: slidify_logo.png
-framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
-highlighter : highlight.js  # {highlight.js, prettify, highlight}
-hitheme     : tomorrow      # 
-widgets     : [mathjax,bootstrap]            # {mathjax, quiz, bootstrap}
-mode        : selfcontained # {standalone, draft}
-knit        : slidify::knit2slides</p>
-
-<hr>
-
-<h2>
-<a id="51-simulation-studies" class="anchor" href="#51-simulation-studies" aria-hidden="true"><span class="octicon octicon-link"></span></a>5.1. Simulation studies</h2>
-
-<blockquote>
-<ul>
-<li>1. <strong>三个目的</strong>
-
-<ul>
-<li>验证ALD分布的adequacy</li>
-<li>比较俩种不同的STAQ模型推断方法：MCMC和INLA</li>
-<li>与Boost方法作比较</li>
-</ul>
-</li>
-<li>2. <strong>二个模型</strong>
-$$ y_{i}=0.4u_{i}+0.5\sin(2.7u_{i})+1.1/(1+u_{i}^{2})+\varepsilon_{i},u_{i}\in [-3,3] $$
-$$ y_{i}=2+sin(2u_{i}/3)+0.5(1+(u_{i}-3)^{2})\varepsilon_{i},u_{i}\in [0,6] $$
-固定观测数n=400,通过假设误差项服从不同的分布，我们来观察不同分布下对应的不同的分位数函数的图像。</li>
-</ul>
-</blockquote>
-
-<p>---  bg:light green</p>
-
-<pre><code>par(mfrow=c(1,2))     
-t &lt;- c(0.1,0.25,0.5,0.75,0.9)
-color &lt;- c("red","blue","yellow","pink","green")
-</code></pre>
-
-<pre><code>x &lt;- seq(-3,3,length.out=400)
-y &lt;- 0.4*x + 0.5*sin(2.7*x) + 1.1/(1+x^2) + rnorm(400)  
-plot(x, y)
-for(i in 1:5){
-    z &lt;- c()  
-    z &lt;- 0.4*x + 0.5*sin(2.7*x) + 1.1/(1+x^2) + qnorm(t[i])
-    lines(x, z, type="l", col=color[i])  }
-</code></pre>
-
-<pre><code>u &lt;- seq(0,6,length.out=400)
-q &lt;- 2 + sin(2*u/3) + 0.5*(1+(u-3)^2)*rnorm(400)   plot(u,q)
-for(i in 1:5){
-    m &lt;- c()  
-    m &lt;- 2 + sin(2*u/3) + 0.5*(1+(u-3)^2)*qnorm(t[i])
-    lines(u,m,type="l",col=color[i])  } 
-</code></pre>
-
-<p>--- bg:#EEE</p>
-
-<div class="highlight highlight-r"><pre>par(<span class="pl-v">mfrow</span><span class="pl-k">=</span>c(<span class="pl-c1">1</span>,<span class="pl-c1">2</span>))     
-<span class="pl-smi">t</span> <span class="pl-k">&lt;-</span> c(<span class="pl-c1">0.1</span>,<span class="pl-c1">0.25</span>,<span class="pl-c1">0.5</span>,<span class="pl-c1">0.75</span>,<span class="pl-c1">0.9</span>)
-<span class="pl-smi">color</span> <span class="pl-k">&lt;-</span> c(<span class="pl-s"><span class="pl-pds">"</span>red<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>blue<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>yellow<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>pink<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>green<span class="pl-pds">"</span></span>)
-<span class="pl-smi">x</span> <span class="pl-k">&lt;-</span> seq(<span class="pl-k">-</span><span class="pl-c1">3</span>,<span class="pl-c1">3</span>,<span class="pl-v">length.out</span><span class="pl-k">=</span><span class="pl-c1">400</span>)
-<span class="pl-smi">y</span> <span class="pl-k">&lt;-</span> <span class="pl-c1">0.4</span><span class="pl-k">*</span><span class="pl-smi">x</span> <span class="pl-k">+</span> <span class="pl-c1">0.5</span><span class="pl-k">*</span>sin(<span class="pl-c1">2.7</span><span class="pl-k">*</span><span class="pl-smi">x</span>) <span class="pl-k">+</span> <span class="pl-c1">1.1</span><span class="pl-k">/</span>(<span class="pl-c1">1</span><span class="pl-k">+</span><span class="pl-smi">x</span><span class="pl-k">^</span><span class="pl-c1">2</span>) <span class="pl-k">+</span> rnorm(<span class="pl-c1">400</span>)  
-plot(<span class="pl-smi">x</span>, <span class="pl-smi">y</span>)
-<span class="pl-k">for</span>(<span class="pl-smi">i</span> <span class="pl-k">in</span> <span class="pl-c1">1</span><span class="pl-k">:</span><span class="pl-c1">5</span>){
-    <span class="pl-smi">z</span> <span class="pl-k">&lt;-</span> c()  
-    <span class="pl-smi">z</span> <span class="pl-k">&lt;-</span> <span class="pl-c1">0.4</span><span class="pl-k">*</span><span class="pl-smi">x</span> <span class="pl-k">+</span> <span class="pl-c1">0.5</span><span class="pl-k">*</span>sin(<span class="pl-c1">2.7</span><span class="pl-k">*</span><span class="pl-smi">x</span>) <span class="pl-k">+</span> <span class="pl-c1">1.1</span><span class="pl-k">/</span>(<span class="pl-c1">1</span><span class="pl-k">+</span><span class="pl-smi">x</span><span class="pl-k">^</span><span class="pl-c1">2</span>) <span class="pl-k">+</span> qnorm(<span class="pl-smi">t</span>[<span class="pl-smi">i</span>])
-    lines(<span class="pl-smi">x</span>, <span class="pl-smi">z</span>, <span class="pl-v">type</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>l<span class="pl-pds">"</span></span>, <span class="pl-v">col</span><span class="pl-k">=</span><span class="pl-smi">color</span>[<span class="pl-smi">i</span>])  }
-<span class="pl-smi">u</span> <span class="pl-k">&lt;-</span> seq(<span class="pl-c1">0</span>,<span class="pl-c1">6</span>,<span class="pl-v">length.out</span><span class="pl-k">=</span><span class="pl-c1">400</span>)
-<span class="pl-smi">q</span> <span class="pl-k">&lt;-</span> <span class="pl-c1">2</span> <span class="pl-k">+</span> sin(<span class="pl-c1">2</span><span class="pl-k">*</span><span class="pl-smi">u</span><span class="pl-k">/</span><span class="pl-c1">3</span>) <span class="pl-k">+</span> <span class="pl-c1">0.5</span><span class="pl-k">*</span>(<span class="pl-c1">1</span><span class="pl-k">+</span>(<span class="pl-smi">u</span><span class="pl-k">-</span><span class="pl-c1">3</span>)<span class="pl-k">^</span><span class="pl-c1">2</span>)<span class="pl-k">*</span>rnorm(<span class="pl-c1">400</span>)   
-plot(<span class="pl-smi">u</span>,<span class="pl-smi">q</span>)
-<span class="pl-k">for</span>(<span class="pl-smi">i</span> <span class="pl-k">in</span> <span class="pl-c1">1</span><span class="pl-k">:</span><span class="pl-c1">5</span>){
-    <span class="pl-smi">m</span> <span class="pl-k">&lt;-</span> c()  
-    <span class="pl-smi">m</span> <span class="pl-k">&lt;-</span> <span class="pl-c1">2</span> <span class="pl-k">+</span> sin(<span class="pl-c1">2</span><span class="pl-k">*</span><span class="pl-smi">u</span><span class="pl-k">/</span><span class="pl-c1">3</span>) <span class="pl-k">+</span> <span class="pl-c1">0.5</span><span class="pl-k">*</span>(<span class="pl-c1">1</span><span class="pl-k">+</span>(<span class="pl-smi">u</span><span class="pl-k">-</span><span class="pl-c1">3</span>)<span class="pl-k">^</span><span class="pl-c1">2</span>)<span class="pl-k">*</span>qnorm(<span class="pl-smi">t</span>[<span class="pl-smi">i</span>])
-    lines(<span class="pl-smi">u</span>,<span class="pl-smi">m</span>,<span class="pl-v">type</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>l<span class="pl-pds">"</span></span>,<span class="pl-v">col</span><span class="pl-k">=</span><span class="pl-smi">color</span>[<span class="pl-smi">i</span>])  }</pre></div>
-
-<hr>
-
-<h2>
-<a id="fig-1" class="anchor" href="#fig-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Fig 1</h2>
-
-<p><img src="assets/img/a.png" alt="a"></p>
-
-<p>--- bg:#EEE</p>
+<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here <a href="https://guides.github.com/features/mastering-markdown/">using GitHub Flavored Markdown</a>, select a template crafted by a designer, and publish. After your page is generated, you can check out the new <code>gh-pages</code> branch locally. If you're using GitHub for Mac or GitHub for Windows, simply sync your repository and you'll see the new branch.</p>
 
 <h3>
-<a id="performance" class="anchor" href="#performance" aria-hidden="true"><span class="octicon octicon-link"></span></a>performance</h3>
+<a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
 
-<blockquote>
-<ul>
-<li><p>1.对于每一次模拟的数据集，我们分别用<strong>MCMC</strong>方法和<strong>INLA</strong>方法对不同分位数下的STAQ模型进行估计，并与自助模型进行比较。选择CRW2模型作为两种方法的函数先验，选择离散的gamma分布(a=1,c=0.001)作为精度参数的先验。
-$$ MADE=\frac{1}{n}|Q_{k}(\tau|u)-\widehat{Q_{k}}(\tau|u)|,k=1,2, $$</p></li>
-<li><p>2.计算绝对值偏差的均值(MADEs),并重复试验200次，根据所得结果来评价估计的效果。
-Fig2展示了误差项分别服从正态和t分布时，估计的分位数曲线。Fig3展示了俩种估计方法得到的后验样本的直方图。</p></li>
-<li><p>3.Table3 比较了俩种方法在不同的样本大小下计算的时间。</p></li>
-<li><p>4.当估计比较极端的分位数时，<strong>MCMC</strong>方法表现要逊于<strong>INLA</strong>。当模拟的样本大小少于400时，例如，我们计算了当n=100和250，MADE的结果和n=400时表现结果相似，尽管值比较大。</p></li>
-</ul>
-</blockquote>
-
-<hr>
-
-<h2>
-<a id="table-1" class="anchor" href="#table-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Table 1</h2>
-
-<p><img src="assets/img/b.png" alt="b"></p>
-
-<hr>
+<p>We've crafted some handsome templates for you to use. Go ahead and click 'Continue to layouts' to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved.</p>
 
 <h3>
-<a id="table2-and-table-3" class="anchor" href="#table2-and-table-3" aria-hidden="true"><span class="octicon octicon-link"></span></a>Table2 and Table 3</h3>
+<a id="creating-pages-manually" class="anchor" href="#creating-pages-manually" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating pages manually</h3>
 
-<p><img src="assets/img/c.png" alt="c"></p>
-
-<hr>
+<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
 
 <h3>
-<a id="fig2" class="anchor" href="#fig2" aria-hidden="true"><span class="octicon octicon-link"></span></a>Fig2</h3>
+<a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
 
-<p><img src="assets/img/d.png"></p>
-
-<hr>
+<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
 
 <h3>
-<a id="fig3" class="anchor" href="#fig3" aria-hidden="true"><span class="octicon octicon-link"></span></a>Fig3</h3>
+<a id="support-or-contact" class="anchor" href="#support-or-contact" aria-hidden="true"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
 
-<p><img src="assets/img/e.png"></p>
-
-<blockquote>
-<ul>
-<li>Conclusion
-
-<ul>
-<li>(i)对于贝叶斯非参数回归推断来说，假设似然函数是ALD是合适的。</li>
-<li>(ii) STAQ模型的performance是具有竞争性的。</li>
-<li>(iii) INLA提供了一种相当好的近似方法。</li>
-</ul>
-</li>
-</ul>
-</blockquote>
-
-<p>---  bg:#EEE</p>
-
-<p><img src="assets/img/o.png" alt="o"></p>
-
-<hr>
-
-<h2>
-<a id="52-munich-rental-guide" class="anchor" href="#52-munich-rental-guide" aria-hidden="true"><span class="octicon octicon-link"></span></a>5.2. Munich rental guide</h2>
-
-<p>我们来分析2003年Munich租金的数据集，响应变量 $y_{i}$ 是公寓租金，协变量有空间
-位置($u_{i}$),地板空间大小($size_{i}$),建造日期($year_{i}$)以及不同的指示变量。数据集由2035个观测组成。响应变量是偏斜异质性分布的事实表明，用分位数回归拟合是合适的。
-<img src="assets/img/f.png" alt="f"></p>
-
-<p>--- bg:#EEE</p>
-
-<h3>
-<a id="geoadditive-model" class="anchor" href="#geoadditive-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>geoadditive model</h3>
-
-<blockquote>
-<ul>
-<li><p>对于第$\tau$个分位数回归，我们建立一个空间可加模型：
-$$ \eta_{\tau i}=x_{i}^{T}\beta_{\tau}+f_{\tau1}(size_{i})+f_{\tau2}(year_{i})+f_{\tau3}(u_{i}) $$</p></li>
-<li><p>其中 $x_{i}$ 代表13个维度的类别型协变量，函数 $f_{\tau 1}$ 和 $f_{\tau 2}$ 是关于地板大小和建造时间的非线性函数，函数 $f_{\tau 3}$ 代表着空间效应模型(基于Munich地区离散的空间信息)</p></li>
-<li><p>用<strong>INLA</strong>方法估计三个分位数模型($\tau=0.25,0.5,0.75$),其中的调节参数$\gamma=2$,超参数$a=1,b=0.001$.我们将看到，分位数推断可以观察到一些均值回归看不到的有用信息。</p></li>
-</ul>
-</blockquote>
-
-<hr>
-
-<h2>
-<a id="fig4" class="anchor" href="#fig4" aria-hidden="true"><span class="octicon octicon-link"></span></a>Fig.4</h2>
-
-<p><img src="assets/img/g.png" alt="g"></p>
-
-<hr>
-
-<h2>
-<a id="information" class="anchor" href="#information" aria-hidden="true"><span class="octicon octicon-link"></span></a>information</h2>
-
-<blockquote>
-<ul>
-<li><p>仔细观察fig.4.,对比 $\tau=0.75$ 和 $\tau=0.25$ 时的租金关于year和floor size的分位数图像，你发现了什么？你可以解释其中的原因吗?</p></li>
-<li><p>可以用你的话描述空间位置影响租金的图像吗？</p></li>
-<li><p>Table5 是用INLA估计得到的参数值，解释一下随着$\tau$的增大，变量Keine.Zh和Kein.Badkach为什么有显著的增长以及变量Keine.Www却下降了。</p></li>
-</ul>
-</blockquote>
-
-<p>--- bg:#EEE</p>
-
-<h2>
-<a id="final-remarks" class="anchor" href="#final-remarks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Final remarks</h2>
-
-<p>1.对于可加混合模型，我们提供了两种推断方法，并通过模拟研究考虑了两种方法的精确性和计算效率</p>
-
-<p>2.Munich rental 的例子显示了我们STAQ模型的有效性。</p>
-
-<p>3.需要指出的是，用此模型去估计极端的分位数是困难的。</p>
-
-<p>4.未来我们可以研究用STAQ模型来对计数和两变量的数据进行分位数推断。</p>
-
-<p>---  bg:yellow</p>
-
-<h1>
-<a id="appendix" class="anchor" href="#appendix" aria-hidden="true"><span class="octicon octicon-link"></span></a>Appendix</h1>
-
-<pre><code>library(INLA)
-data(Munich)
-</code></pre>
-
-<pre><code>g &lt;- system.file("demodata/munich.graph", package="INLA")
-
-formula &lt;- rent ~ f(location, model = "besag", graph.file = g,
-                   param = c(1,0.001)) +
-                  f(year, model="crw2", values = seq(1918,2001), param = c(1,0.001)) +
-                  f(floor.size, model = "crw2", param = c(1,0.001)) +
-                  Gute.Wohnlage + Beste.Wohnlage + Keine.Wwv + Keine.Zh +
-                  Kein.Badkach + Besond.Bad + Gehobene.Kueche +
-                  zim1 + zim2 + zim3 + zim4 + zim5 + zim6 -1
-mod &lt;- inla(formula, data = Munich, verbose = T, family = "laplace",
-             control.family =list(alpha = 0.5, gamma = 2, epsilon = 0.01),
-             control.predictor = list(initial = 12), 
-             control.inla = list(h = 1e-3))
-</code></pre>
-
-<hr>
-
-<p><img src="assets/img/h.png" alt="h"></p>
-
-<hr>
-
-      <footer class="site-footer">
-        <span class="site-footer-owner"><a href="https://github.com/louis1991/slidify">Slidify</a> is maintained by <a href="https://github.com/louis1991">louis1991</a>.</span>
-
-        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
-      </footer>
-
-    </section>
-
-  
+<p>Having trouble with Pages? Check out our <a href="https://help.github.com/pages">documentation</a> or <a href="https://github.com/contact">contact support</a> and we’ll help you sort it out.</p>
+      </section>
+    </div>
+    <footer>
+      <p>Project maintained by <a href="https://github.com/louis1991">louis1991</a></p>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
   </body>
 </html>
-
